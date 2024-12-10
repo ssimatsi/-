@@ -1,0 +1,42 @@
+<?php
+
+// Проверяем наличие cookie 'show_part'
+if (!isset($_COOKIE['show_part'])) {
+    // Если cookie отсутствует, устанавливаем её значение в true (часть видима)
+    setcookie('show_part', 'true');
+}
+
+// Получение значения cookie
+$isVisible = $_COOKIE['show_part'] === 'true';
+
+// Обработка формы (если пользователь нажал кнопку скрыть/показать)
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (isset($_POST['action']) && $_POST['action'] == 'toggleVisibility') {
+        $newValue = !$isVisible ? 'true' : 'false'; // Меняем значение видимости
+        setcookie('show_part', $newValue); // Устанавливаем новое значение cookie
+        header("Location: " . $_SERVER['PHP_SELF']); // Перенаправляем на ту же страницу для обновления состояния
+        exit();
+    }
+}
+?>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Пример работы с cookie</title>
+    <style>
+        #hidden-part {
+            display: <?= $isVisible ? 'block' : 'none'; ?>
+        }
+    </style>
+</head>
+<body>
+<h1>Пример работы с cookie</h1>
+<p>Вы можете скрыть или показать часть интерфейса.</p>
+<div id="hidden-part">Это скрытая часть интерфейса.</div>
+<br><br>
+<form method="post">
+    <input type="submit" name="action" value="toggleVisibility">
+</form>
+</body>
+</html>
