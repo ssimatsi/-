@@ -1,0 +1,37 @@
+<?php
+$requestUri = strtok($_SERVER['REQUEST_URI'], '?');
+
+switch ($requestUri) {
+    case '/set-theme':
+        setcookie("theme", "dark", [
+            "expires" => time() + (30 * 24 * 60 * 60), // 30 дней
+            "path" => "/",
+            "secure" => false,
+            "httponly" => true,
+            "samesite" => "Lax"
+        ]);
+        echo "Cookie theme установлено.";
+        break;
+
+    case '/get-theme':
+        if (isset($_COOKIE['theme'])) {
+            echo "Текущая тема: " . htmlspecialchars($_COOKIE['theme']);
+        } else {
+            echo "Cookie theme не найдено.";
+        }
+        break;
+
+    case '/delete-theme':
+        setcookie("theme", "", [
+            "expires" => time() - 3600, // Удаление
+            "path" => "/"
+        ]);
+        echo "Cookie theme удалено.";
+        break;
+
+    default:
+        http_response_code(404);
+        echo "404: Страница не найдена.";
+        break;
+}
+?>
